@@ -110,7 +110,7 @@ class RodFaceView extends WatchUi.WatchFace {
 
     function drawIcons(dc as Dc) {
         var centerX = width_screen/2;
-        var centerY = 95;
+        var centerY = 90;
         var spacing = 10;
         var totalSize = 0;
         var icons = [];
