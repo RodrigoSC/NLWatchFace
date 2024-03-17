@@ -66,40 +66,44 @@ class RodFaceView extends WatchUi.WatchFace {
     }
 
     function drawHands(dc, clock_hour, clock_min, clock_sec) {
-        var hour, min, sec;
-        var hours_hand = [[5, -30], [-5, -30], [-5, 115], [5, 115]];
-        var min_hand = [[5, -30], [-5, -30], [-5, 195], [5, 195]];
-        var sec_hand = [[2, -30], [-2, -30], [-2, 195], [2, 195]];
-
 		// Draw the hour hand - convert to minutes then compute angle
-        hour = ( ( ( clock_hour % 12 ) * 60 ) + clock_min ); // hour = 2*60.0;
+        var hour = ( ( ( clock_hour % 12 ) * 60 ) + clock_min ); // hour = 2*60.0;
         hour = hour / (12 * 60.0) * Math.PI * 2 - Math.PI;
-        drawHand(dc, hour, hours_hand, Graphics.COLOR_LT_GRAY);
+        drawHand(dc, hour, 5, 115, 17, Graphics.COLOR_LT_GRAY);
 
-        min = ( clock_min / 60.0); // min = 40/60.0;
+        var min = ( clock_min / 60.0); // min = 40/60.0;
         min = min * Math.PI * 2 - Math.PI;
-        
-        drawHand(dc, min, min_hand, Graphics.COLOR_WHITE);
-        dc.fillCircle(width_screen/2, height_screen/2, 17);
+        drawHand(dc, min, 5, 195, 17, Graphics.COLOR_WHITE);
         
         if(showSeconds) {
-            sec = ( clock_sec / 60.0) *  Math.PI * 2 - Math.PI;
-            drawHand(dc, sec, sec_hand, Graphics.COLOR_YELLOW);
-            dc.fillCircle(width_screen/2, height_screen/2, 9);
+            var sec = ( clock_sec / 60.0) *  Math.PI * 2 - Math.PI;
+            drawHand(dc, sec, 2, 195, 9, Graphics.COLOR_YELLOW);
         }
     }
 
-    function drawHand(dc, angle, coords, handColour){
+    function drawHand(dc, angle, half_width, long_length, circle_radius, handColour){
+        var shadowOffset = 2;
+        var shadowColor = 0x7F000000;
         var centerX = width_screen/2;
         var centerY = height_screen/2;
         var cos = Math.cos(angle);
         var sin = Math.sin(angle);
+        var coords = [[half_width, -30], [-half_width, -30], [-half_width, long_length], [half_width, long_length]];
         var res = [[0, 0], [0, 0], [0, 0], [0, 0]];
 
-        dc.setColor(handColour, Graphics.COLOR_TRANSPARENT);
+        dc.setFill(0x7F000000);
+        dc.fillCircle(width_screen/2 + shadowOffset, height_screen/2 + shadowOffset, circle_radius);
         for (var i=0; i < 4; i++) {
-            res[i][0] = coords[i][0]*cos - coords[i][1]*sin + centerX;
-            res[i][1] = coords[i][1]*cos + coords[i][0]*sin + centerY;
+            res[i][0] = coords[i][0]*cos - coords[i][1]*sin + centerX + shadowOffset;
+            res[i][1] = coords[i][1]*cos + coords[i][0]*sin + centerY + shadowOffset;
+        }
+        dc.fillPolygon(res);
+
+        dc.setColor(handColour, Graphics.COLOR_TRANSPARENT);
+        dc.fillCircle(width_screen/2, height_screen/2, circle_radius);
+        for (var i=0; i < 4; i++) {
+            res[i][0] -= shadowOffset;
+            res[i][1] -= shadowOffset;
         }
         dc.fillPolygon(res);
     }
