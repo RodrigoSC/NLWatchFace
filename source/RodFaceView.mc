@@ -72,42 +72,52 @@ class RodFaceView extends WatchUi.WatchFace {
 		// Draw the hour hand - convert to minutes then compute angle
         var hour = ( ( ( clock_hour % 12 ) * 60 ) + clock_min ); // hour = 2*60.0;
         hour = hour / (12 * 60.0) * Math.PI * 2 - Math.PI;
-        drawHand(dc, hour, 5, 115, 17, colorDim);
+        drawHand(dc, hour, 15, 115, 19, colorDim);
 
         var min = ( clock_min / 60.0); // min = 40/60.0;
         min = min * Math.PI * 2 - Math.PI;
-        drawHand(dc, min, 5, 185, 17, Graphics.createColor(254, 255, 255, 255));
+        drawHand(dc, min, 15, 185, 19, Graphics.createColor(254, 255, 255, 255));
         
         if(showSeconds) {
             var sec = ( clock_sec / 60.0) *  Math.PI * 2 - Math.PI;
-            drawHand(dc, sec, 2, 185, 9, 0xFFF05518);
+            drawHand(dc, sec, 9, 185, 11, 0xFFF05518);
         }
     }
 
-    function drawHand(dc, angle, half_width, long_length, circle_radius, handColour){
-        var shadowOffset = 2;
-        var centerX = screenWidth/2;
-        var centerY = screenHeight/2;
-        var cos = Math.cos(angle);
+    function drawHand(dc, angle, width, height, circle_radius, handColour){
+        drawHandBasic(dc, angle, width, height, circle_radius, 0x64000000, 2);
+        drawHandBasic(dc, angle, width, height, circle_radius, handColour, 0);
+    }
+
+    function drawHandBasic(dc, angle, width, height, circle_radius, handColour, offset){
         var sin = Math.sin(angle);
-        var coords = [[half_width, -30], [-half_width, -30], [-half_width, long_length], [half_width, long_length]];
-        var res = [[0, 0], [0, 0], [0, 0], [0, 0]];
+        var cos = Math.cos(angle);
 
-        dc.setFill(0x7F000000);
-        dc.fillCircle(screenWidth/2 + shadowOffset, screenHeight/2 + shadowOffset, circle_radius);
-        for (var i=0; i < 4; i++) {
-            res[i][0] = coords[i][0]*cos - coords[i][1]*sin + centerX + shadowOffset;
-            res[i][1] = coords[i][1]*cos + coords[i][0]*sin + centerY + shadowOffset;
-        }
-        dc.fillPolygon(res);
+        var centerOffset = 30;
+        var handBuffer = Graphics.createBufferedBitmap({:width=> circle_radius * 2 + 3, 
+                                                        :height=>height + centerOffset + 3});
+        var tmpDc = handBuffer.get().getDc();
 
-        dc.setFill(handColour);
-        dc.fillCircle(screenWidth/2, screenHeight/2, circle_radius);
-        for (var i=0; i < 4; i++) {
-            res[i][0] -= shadowOffset;
-            res[i][1] -= shadowOffset;
-        }
-        dc.fillPolygon(res);
+        var x = circle_radius;
+
+        tmpDc.setColor(Graphics.COLOR_TRANSPARENT, Graphics.COLOR_TRANSPARENT);
+        tmpDc.setAntiAlias(true);
+        tmpDc.clear();
+
+        tmpDc.setFill(handColour);
+        tmpDc.fillCircle(x, centerOffset, circle_radius);
+        tmpDc.fillRoundedRectangle(x - width/2, 0, width, height + centerOffset, width/2);
+        
+
+        var transformMatrix = new Graphics.AffineTransform();
+        transformMatrix.initialize();
+        transformMatrix.translate(-x*cos + centerOffset*sin, -centerOffset*cos - x*sin);
+        transformMatrix.rotate(angle);
+
+        dc.drawBitmap2(screenWidth / 2 + offset, screenHeight / 2 + offset, handBuffer, {
+            :transform => transformMatrix,
+            :filterMode => Graphics.FILTER_MODE_BILINEAR
+        });
     }
 
     function drawIcons(dc as Dc) {
@@ -138,14 +148,14 @@ class RodFaceView extends WatchUi.WatchFace {
     }
 
     function drawTicks(dc as Dc, width, height, round, jump) {
-        var watchCenterBuffer = Graphics.createBufferedBitmap({ :width=>width, :height=>height });
-        var tempCenter = watchCenterBuffer.get().getDc();
+        var tickBuffer = Graphics.createBufferedBitmap({ :width=>width+3, :height=>height+3});
+        var tmpDc = tickBuffer.get().getDc();
         
-        tempCenter.setColor(Graphics.COLOR_TRANSPARENT, Graphics.COLOR_TRANSPARENT);
-        tempCenter.clear();
-        tempCenter.setAntiAlias(true);
-        tempCenter.setFill(colorDim);
-        tempCenter.fillRoundedRectangle(0, 0, width, height, round);
+        tmpDc.setColor(Graphics.COLOR_TRANSPARENT, Graphics.COLOR_TRANSPARENT);
+        tmpDc.clear();
+        tmpDc.setAntiAlias(true);
+        tmpDc.setFill(colorDim);
+        tmpDc.fillRoundedRectangle(0, 0, width, height, round);
 
         var transformMatrix = new Graphics.AffineTransform();
         var x = -width/2, y = screenHeight / 2 - height - 5;
@@ -156,7 +166,7 @@ class RodFaceView extends WatchUi.WatchFace {
             transformMatrix.translate(x*cos - y*sin, y*cos + x*sin);
             transformMatrix.rotate(i);
 
-            dc.drawBitmap2(screenWidth / 2, screenHeight / 2, watchCenterBuffer, {
+            dc.drawBitmap2(screenWidth / 2, screenHeight / 2, tickBuffer, {
                 :transform => transformMatrix,
                 :filterMode => Graphics.FILTER_MODE_BILINEAR
             });
