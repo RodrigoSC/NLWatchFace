@@ -8,12 +8,12 @@ class RodFaceView extends WatchUi.WatchFace {
     var width_screen, height_screen;
     var showSeconds = true;
     var batteryIcon as BitmapResource;
-    var bellIcon as BitmapResource;
+    var notificationIcon as BitmapResource;
 
     function initialize() {
         WatchFace.initialize();
         batteryIcon = WatchUi.loadResource($.Rez.Drawables.BatteryIcon);
-        bellIcon = WatchUi.loadResource($.Rez.Drawables.BellIcon);
+        notificationIcon = WatchUi.loadResource($.Rez.Drawables.NotificationIcon);
     }
 
     // Load your resources here
@@ -119,7 +119,7 @@ class RodFaceView extends WatchUi.WatchFace {
         var battery = System.getSystemStats().battery;
 
         if (battery <= 5) {icons.add(batteryIcon);}
-        if (notifications > 0) {icons.add(bellIcon);}
+        if (notifications > 0) {icons.add(notificationIcon);}
 
         for(var i = 0; i < icons.size(); i ++) {
             totalSize += icons[i].getWidth();

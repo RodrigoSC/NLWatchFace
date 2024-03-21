@@ -1,5 +1,5 @@
 <drawables>
     <bitmap id="LauncherIcon" filename="launcher_icon.png" />
     <bitmap id="BatteryIcon" filename="Battery.png" packingFormat="png" />
-    <bitmap id="BellIcon" filename="Bell.png" packingFormat="png" />
+    <bitmap id="NotificationIcon" filename="Notification.png" packingFormat="png" />
 </drawables>
