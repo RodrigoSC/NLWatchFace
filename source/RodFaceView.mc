@@ -38,8 +38,10 @@ class RodFaceView extends WatchUi.WatchFace {
         var now = Time.now();
         var info = Gregorian.info(now, Time.FORMAT_LONG);
         
-        var dateStr = Lang.format("$1$ $2$    ", [info.day_of_week, info.day]);
+        var dateStr = Lang.format("$1$ $2$", [info.day_of_week, info.day]);
         var dateView = View.findDrawableById("DateLabel") as Text;
+
+        dateView.setLocation(screenWidth - 55, dateView.locY);
         dateView.setText(dateStr);
 
         // Call the parent onUpdate function to redraw the layout
@@ -64,7 +66,7 @@ class RodFaceView extends WatchUi.WatchFace {
 
     // Terminate any active timers and prepare for slow updates.
     function onEnterSleep() as Void {
-        showSeconds = true;
+        showSeconds = false;
         requestUpdate();
     }
 
@@ -105,10 +107,8 @@ class RodFaceView extends WatchUi.WatchFace {
         tmpDc.clear();
 
         tmpDc.setFill(handColour);
-        tmpDc.fillCircle(x, centerOffset, circle_radius);
         tmpDc.fillRoundedRectangle(x - width/2, 0, width, height + centerOffset, width/2);
         
-
         var transformMatrix = new Graphics.AffineTransform();
         transformMatrix.initialize();
         transformMatrix.translate(-x*cos + centerOffset*sin, -centerOffset*cos - x*sin);
@@ -118,6 +118,8 @@ class RodFaceView extends WatchUi.WatchFace {
             :transform => transformMatrix,
             :filterMode => Graphics.FILTER_MODE_BILINEAR
         });
+        dc.setFill(handColour);
+        dc.fillCircle(screenWidth / 2 + offset, screenHeight / 2 + offset, circle_radius);
     }
 
     function drawIcons(dc as Dc) {

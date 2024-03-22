@@ -1,4 +1,4 @@
 <layout id="WatchFace">
     <bitmap id="Background" filename="background.png"  />
-    <label id="DateLabel" x="right" y="center" font="Graphics.FONT_SYSTEM_TINY" justification="Graphics.TEXT_JUSTIFY_RIGHT" color="Graphics.COLOR_WHITE" />
+    <label id="DateLabel" x="center" y="center" font="Graphics.FONT_SYSTEM_TINY" justification="Graphics.TEXT_JUSTIFY_RIGHT" color="Graphics.COLOR_WHITE" />
 </layout>
