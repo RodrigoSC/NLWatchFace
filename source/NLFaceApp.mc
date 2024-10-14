@@ -2,7 +2,7 @@ import Toybox.Application;
 import Toybox.Lang;
 import Toybox.WatchUi;
 
-class RodFaceApp extends Application.AppBase {
+class NLFaceApp extends Application.AppBase {
 
     function initialize() {
         AppBase.initialize();
@@ -17,12 +17,12 @@ class RodFaceApp extends Application.AppBase {
     }
 
     // Return the initial view of your application here
-    function getInitialView() as Array<Views or InputDelegates>? {
-        return [ new RodFaceView() ] as Array<Views or InputDelegates>;
+    function getInitialView() {
+        return [ new NLFaceView() ];
     }
 
 }
 
-function getApp() as RodFaceApp {
-    return Application.getApp() as RodFaceApp;
+function getApp() as NLFaceApp {
+    return Application.getApp() as NLFaceApp;
 }

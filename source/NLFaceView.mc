@@ -4,7 +4,7 @@ import Toybox.System;
 import Toybox.WatchUi;
 import Toybox.Time.Gregorian;
 
-class RodFaceView extends WatchUi.WatchFace {
+class NLFaceView extends WatchUi.WatchFace {
     var screenWidth, screenHeight;
     var showSeconds = true;
     var batteryIcon as BitmapResource;

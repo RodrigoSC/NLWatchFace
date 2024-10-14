@@ -1,6 +1,6 @@
-# Garmin RodFace
+# NL Watch Face
 
-A watch face dedicated to Garmin FR965. It's for personal use, no special care was taken with making the code ready for any other device, but it might work...
+A watch face inspired by the clocks in NL train stations. 
 
 ## Resources
 
