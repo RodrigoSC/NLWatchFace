@@ -6,10 +6,11 @@ import Toybox.Time.Gregorian;
 
 class NLFaceView extends WatchUi.WatchFace {
     var screenWidth, screenHeight;
+    var bigTickSize, bigHandSize, smallHandSize;
     var showSeconds = true;
     var batteryIcon as BitmapResource;
     var notificationIcon as BitmapResource;
-    var colorDim = 0xFFD3D3D3;
+    const colorDim = 0xFFD3D3D3;
 
     function initialize() {
         WatchFace.initialize();
@@ -21,6 +22,9 @@ class NLFaceView extends WatchUi.WatchFace {
     function onLayout(dc as Dc) as Void {
         screenWidth = dc.getWidth();
 		screenHeight = dc.getHeight();
+        bigTickSize = 30;
+        bigHandSize = screenWidth/2 - bigTickSize - 10;
+        smallHandSize = bigHandSize - 70;
         setLayout(Rez.Layouts.WatchFace(dc));
     }
 
@@ -41,13 +45,13 @@ class NLFaceView extends WatchUi.WatchFace {
         var dateStr = Lang.format("$1$ $2$", [info.day_of_week, info.day]);
         var dateView = View.findDrawableById("DateLabel") as Text;
 
-        dateView.setLocation(screenWidth - 55, dateView.locY);
+        dateView.setLocation(screenWidth - bigTickSize - 15, dateView.locY);
         dateView.setText(dateStr);
 
         // Call the parent onUpdate function to redraw the layout
         View.onUpdate(dc);
         dc.setAntiAlias(true);
-        drawTicks(dc, 13, 30, 3, Math.PI / 6);
+        drawTicks(dc, 13, bigTickSize, 3, Math.PI / 6);
         drawTicks(dc, 3, 10, 2, Math.PI / 30);
         drawIcons(dc);
         drawHands(dc, clockTime.hour, clockTime.min, clockTime.sec);
@@ -74,15 +78,15 @@ class NLFaceView extends WatchUi.WatchFace {
 		// Draw the hour hand - convert to minutes then compute angle
         var hour = ( ( ( clock_hour % 12 ) * 60 ) + clock_min ); // hour = 2*60.0;
         hour = hour / (12 * 60.0) * Math.PI * 2 - Math.PI;
-        drawHand(dc, hour, 15, 115, 19, colorDim);
+        drawHand(dc, hour, 15, smallHandSize, 19, colorDim);
 
         var min = ( clock_min / 60.0); // min = 40/60.0;
         min = min * Math.PI * 2 - Math.PI;
-        drawHand(dc, min, 15, 185, 19, Graphics.createColor(254, 255, 255, 255));
+        drawHand(dc, min, 15, bigHandSize, 19, Graphics.createColor(254, 255, 255, 255));
         
         if(showSeconds) {
             var sec = ( clock_sec / 60.0) *  Math.PI * 2 - Math.PI;
-            drawHand(dc, sec, 9, 185, 11, 0xFFF05518);
+            drawHand(dc, sec, 9, bigHandSize, 11, 0xFFF05518);
         }
     }
 
