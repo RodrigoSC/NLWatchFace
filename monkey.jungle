@@ -1,1 +1,5 @@
 project.manifest = manifest.xml
+fr265.resourcePath = $(fr265.resourcePath);resources-launcher-60
+fr965.resourcePath = $(fr965.resourcePath);resources-launcher-65
+fenix847mm.resourcePath = $(fenix847mm.resourcePath);resources-launcher-65
+fenix843mm.resourcePath = $(fenix843mm.resourcePath);resources-launcher-60
